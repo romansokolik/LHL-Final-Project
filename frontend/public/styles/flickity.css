@@ -1,0 +1,10 @@
+/* Add to your global.css or component-specific CSS */
+.carousel-cell {
+    margin-right: 10px;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.flickity-enabled {
+    outline: none;
+}

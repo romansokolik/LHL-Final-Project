@@ -165,5 +165,5 @@ npm run dev
 npm install bootstrap react-bootstrap
 npm install bootstrap-icons
 npm install --save-dev @types/isotope-layout
-
-
+npm install flickity
+npm install --save-dev @types/flickity
