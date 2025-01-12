@@ -26,12 +26,13 @@ export default function SentimentAnalysisForm({data}: { data: { text: string, la
                 })
             }).then(response => response.json())
                 .then(data => {
-                    // console.log('data:', data);
+                    console.log('data:', data);
                     setScores(data);
                 }).finally(() => {
                     setLoading(false);
                 });
         } catch (err: unknown) {
+            console.log('ERROR:', err);
             const errorMessage = (err instanceof Error) ? err.message : "An error occurred";
             setError(errorMessage);
         } finally {

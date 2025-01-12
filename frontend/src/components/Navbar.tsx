@@ -23,7 +23,7 @@ export default function Navbar() {
                             </li>
                         ))}
                     </ul>
-                    <SearchForm/>
+                    {/*<SearchForm/>*/}
                 </div>
             </Container>
         </nav>

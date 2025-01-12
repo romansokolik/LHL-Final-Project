@@ -66,4 +66,104 @@ class MyModel(models.Model):
 # Run the server:
 python manage.py runserver
 
+2. Set Up Next.js as the Frontend
+# Create a Next.js app:
+npx create-next-app frontend
+cd frontend
+
+# Install Axios for making HTTP/API requests:
+npm install axios
+
+# Fetch Data from Django API
+# Create a service to handle API requests in frontend/src/utils/api.tsx:
+--- src/utils/api.tsx ---
+import axios from 'axios';
+
+const API_URL = 'http://localhost:8000/api/';
+
+export const getMyModels = async () => {
+  const response = await axios.get(`${API_URL}mymodel/`);
+  return response.data;
+};
+
+# Fetch and display data in a Next.js page:
+import { useEffect, useState } from 'react';
+import { fetchItems } from '@/utils/api';
+
+export default function Home() {
+    const [items, setItems] = useState([]);
+
+    useEffect(() => {
+        const getItems = async () => {
+            try {
+                const data = await fetchItems();
+                setItems(data);
+            } catch (error) {
+                console.error('Error fetching items:', error);
+            }
+        };
+
+        getItems();
+    }, []);
+
+    return (
+        <div>
+            <h1>Items</h1>
+            <ul>
+                {items.map((item) => (
+                    <li key={item.id}>{item.name}</li>
+                ))}
+            </ul>
+        </div>
+    );
+}
+
+# Run the Next.js app:
+npm run dev
+
+# 3. Configure CORS
+# Django will block requests from other origins by default. Install and configure the CORS library:
+# Install django-cors-headers:
+pip install django-cors-headers
+
+# Add 'corsheaders' to INSTALLED_APPS in settings.py:
+--- settings.py ---
+INSTALLED_APPS = [
+    ...
+    'corsheaders',
+]
+
+# Add 'corsheaders.middleware.CorsMiddleware' to MIDDLEWARE in settings.py:
+--- settings.py ---
+MIDDLEWARE = [
+    ...
+    'corsheaders.middleware.CorsMiddleware',
+    ...
+]
+
+# Add CORS_ORIGIN_ALLOW_ALL = True to settings.py to allow all origins:
+# Allow your Next.js app to access the Django API:
+--- settings.py ---
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",  # Adjust based on your Next.js frontend URL
+]
+
+# 4. Run Both Servers
+# Start the Django server:
+python manage.py runserver
+
+# Start the Next.js server:
+npm run dev
+
+# 5. Optional Enhancements
+# Use JWT Authentication for secure API access.
+# Deploy Django and Next.js on platforms like AWS, Vercel, or Heroku.
+# Use environment variables for sensitive configuration.
+
+
+# Install libraries
+npm install bootstrap react-bootstrap
+npm install bootstrap-icons
+npm install --save-dev @types/isotope-layout
+
 
