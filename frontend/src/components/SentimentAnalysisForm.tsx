@@ -4,17 +4,33 @@ import Container from "react-bootstrap/Container";
 import HandThumb from "@/components/HandThumb";
 import React, {useState} from "react";
 import LoadingButton from "@/components/LoadingButton";
+import {Accordion} from "react-bootstrap";
 
 export default function SentimentAnalysisForm({data}: { data: { text: string, label: number } }) {
     const [textareaValue, setTextareaValue] = useState(data.text);
     const [labelValue] = useState(data.label);
     const [loading, setLoading] = useState(false);
     const [scores, setScores] = useState([] as [string, number][] | undefined);
+    const [reports, setReports] = useState([] as [] | undefined);
+    const [predictions, setPredictions] = useState([] as [] | undefined);
+
+    // const [nlps, setNlps] = useState([] as [string, number][] | undefined);
+    // const [configs, setConfigs] = useState([] as [string, number][] | undefined);
+    // const [tokenizers, setTokenizers] = useState([] as [string, number][] | undefined);
+    // const [models, setModels] = useState([] as [string, number][] | undefined);
+    // const [labels_trues, setLabelsTrues] = useState([] as [string, number][] | undefined);
     const [error, setError] = useState('');
 
     const handleAction = async () => {
         setLoading(true); // Set loading to true
         setScores(undefined); // Clear previous scores
+        setReports(undefined); // Clear previous reports
+        setPredictions(undefined); // Clear previous predictions
+        // setNlps(undefined); // Clear previous nlps
+        // setConfigs(undefined); // Clear previous configs
+        // setTokenizers(undefined); // Clear previous tokenizers
+        // setModels(undefined); // Clear previous models
+        // setLabelsTrues(undefined); // Clear previous labels_trues
         setError(''); // Clear previous error
         try {
             await fetch(`${process.env.NEXT_PUBLIC_API_URL}/sentiments/check/`, {
@@ -24,10 +40,20 @@ export default function SentimentAnalysisForm({data}: { data: { text: string, la
                     text: textareaValue,
                     label: labelValue
                 })
+                // }).then(response => console.log('response:', typeof response, response.json()))
             }).then(response => response.json())
                 .then(data => {
                     console.log('data:', data);
-                    setScores(data);
+                    // console.log('data:', data[0].prediction_labels);
+                    setScores(data[0].scores);
+                    setReports(data[1].reports);
+                    setPredictions(data[2].predictions);
+                    // setNlps(data[3].nlps);
+                    // setConfigs(data[4].configs);
+                    // setTokenizers(data[5].tokenizers);
+                    // setModels(data[6].models);
+                    // setLabelsTrues(data[7].labels_trues);
+                    // console.log('prediction_labels:', typeof data[5]);
                 }).finally(() => {
                     setLoading(false);
                 });
@@ -56,17 +82,37 @@ export default function SentimentAnalysisForm({data}: { data: { text: string, la
                     <HandThumb score={labelValue}/>Review Text:
                 </label>
             </div>
-            <div className="m-3">
+            <div className="container my-3">
                 <LoadingButton
                     onButtonClickAction={handleAction}
                     loading={loading}
                     label={'Sentiment Analysis'}
                 />
-                {scores && scores.map((score, i) => (
-                    <h3 key={i}>{score[0]}: <HandThumb score={score[1]}/></h3>
-                ))}
-                {error && <p style={{color: "red"}}>Error: {error}</p>}
             </div>
+            {/*{scores && <pre>SCORES:{JSON.stringify(scores[0], null, 2)}</pre>}*/}
+            {reports && <pre>REPORTS:{JSON.stringify(reports, null, 2)}</pre>}
+            {predictions && <pre>PREDICTIONS:{JSON.stringify(predictions, null, 2)}</pre>}
+            {/*{nlps && <pre>NLPS:{JSON.stringify(nlps[0], null, 2)}</pre>}*/}
+            {/*{configs && <pre>CONFIGS:{JSON.stringify(configs[0], null, 2)}</pre>}*/}
+            {/*{tokenizers && <pre>TOKENIZERS:{JSON.stringify(tokenizers[0], null, 2)}</pre>}*/}
+            {/*{models && <pre>MODELS:{JSON.stringify(models[0], null, 2)}</pre>}*/}
+            {/*{labels_trues && <pre>LABELS TRUE:{JSON.stringify(labels_trues[0], null, 2)}</pre>}*/}
+            <Accordion defaultActiveKey={String(0)}>
+                {scores && reports && predictions && scores.map((score, i) => (
+                    <Accordion.Item eventKey={String(i)} key={i}>
+                        <Accordion.Header>
+                            <HandThumb score={score[1]} rem={2}/>
+                            <span className={'h1'}>{score[0]}</span>
+                        </Accordion.Header>
+                        <Accordion.Body>
+                            {/*<p>{Object(reports[i][0])}</p>*/}
+                            {/*<p>{Object(Object(reports[i][1]))['1'].precision}</p>*/}
+                            <p>SCORE: {Object(Object(predictions[i][1])[0]).score}</p>
+                        </Accordion.Body>
+                    </Accordion.Item>
+                ))}
+            </Accordion>
+            {error && <p style={{color: "red"}}>Error: {error}</p>}
         </Container>
     );
 }

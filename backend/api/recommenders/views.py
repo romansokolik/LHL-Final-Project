@@ -20,12 +20,21 @@ def index(request):
         "JOIN (SELECT ROUND(AVG(rating),1) AS avg_rating FROM ratings GROUP BY user_id) USING(movie_id)"
         "WHERE tmdb_id IN (SELECT tmdb_id FROM main.posters_tmdb ORDER BY RANDOM() LIMIT 60)"
     )
-    query = """WITH T1 AS (SELECT DISTINCT movie_id, ROUND(AVG(rating), 1) AS avg_rating FROM ratings GROUP BY movie_id)
-   , T2 AS (SELECT DISTINCT tmdb_id, movie_id, title, genres FROM posters_tmdb
-                LEFT JOIN links l USING (tmdb_id)
-                LEFT JOIN movies m USING (movie_id))
-SELECT * FROM T2 LEFT JOIN T1 USING(movie_id)
-WHERE tmdb_id IN (SELECT tmdb_id FROM posters_tmdb ORDER BY RANDOM() LIMIT 60)"""
+    query = """
+        WITH T1 AS (
+            SELECT DISTINCT movie_id, ROUND(AVG(rating), 1) AS avg_rating 
+            FROM ratings GROUP BY movie_id
+        )
+        , T2 AS (
+            SELECT DISTINCT tmdb_id, movie_id, title, genres 
+            FROM posters_tmdb
+            LEFT JOIN links l USING (tmdb_id)
+            LEFT JOIN movies m USING (movie_id)
+        )
+        SELECT * FROM T2 LEFT JOIN T1 USING(movie_id)
+        WHERE tmdb_id IN (
+            SELECT tmdb_id FROM posters_tmdb ORDER BY RANDOM() LIMIT 60
+        )"""
     print('query:', query)
     cursor.execute(query)
     results = cursor.fetchall()
@@ -52,8 +61,11 @@ WHERE tmdb_id IN (SELECT tmdb_id FROM posters_tmdb ORDER BY RANDOM() LIMIT 60)""
             }
             items.append(item)
         # print('genres:', list(genres.keys()))
-
     return JsonResponse({'slides': items, 'genres': list(genres.keys())})
+
+
+def movie(request):
+    return JsonResponse({'error': 'movie_id is required'}, status=400)
 
 
 def image(request):
@@ -67,4 +79,3 @@ def image(request):
     with open(f'../frontend/public/images/posters/tmdb/{tmdb_id}/w220_and_h330_face.jpg', 'rb') as f:
         return HttpResponse(f.read(), content_type='image/jpeg')
     # return JsonResponse({'error': 'unknown error'}, status=500)
-
