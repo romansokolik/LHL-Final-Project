@@ -4,7 +4,7 @@ import Container from "react-bootstrap/Container";
 import HandThumb from "@/components/HandThumb";
 import React, {useState} from "react";
 import LoadingButton from "@/components/LoadingButton";
-import {Accordion} from "react-bootstrap";
+import {Accordion, Col, Row} from "react-bootstrap";
 
 export default function SentimentAnalysisForm({data}: { data: { text: string, label: number } }) {
     const [textareaValue, setTextareaValue] = useState(data.text);
@@ -43,11 +43,10 @@ export default function SentimentAnalysisForm({data}: { data: { text: string, la
                 // }).then(response => console.log('response:', typeof response, response.json()))
             }).then(response => response.json())
                 .then(data => {
-                    console.log('data:', data);
-                    // console.log('data:', data[0].prediction_labels);
-                    setScores(data[0].scores);
-                    setReports(data[1].reports);
-                    setPredictions(data[2].predictions);
+                    // console.log('data:', data);
+                    setScores(data.results.scores);
+                    setReports(data.results.reports.map((report: object) => Object(report)[1]));
+                    setPredictions(data.results.predictions.map((prediction: object) => Object(prediction)[1][0]));
                     // setNlps(data[3].nlps);
                     // setConfigs(data[4].configs);
                     // setTokenizers(data[5].tokenizers);
@@ -90,8 +89,8 @@ export default function SentimentAnalysisForm({data}: { data: { text: string, la
                 />
             </div>
             {/*{scores && <pre>SCORES:{JSON.stringify(scores[0], null, 2)}</pre>}*/}
-            {reports && <pre>REPORTS:{JSON.stringify(reports, null, 2)}</pre>}
-            {predictions && <pre>PREDICTIONS:{JSON.stringify(predictions, null, 2)}</pre>}
+            {/*{reports && <pre>REPORTS:{JSON.stringify(reports[0], null, 2)}</pre>}*/}
+            {/*{predictions && <pre>PREDICTIONS:{JSON.stringify(predictions[0], null, 2)}</pre>}*/}
             {/*{nlps && <pre>NLPS:{JSON.stringify(nlps[0], null, 2)}</pre>}*/}
             {/*{configs && <pre>CONFIGS:{JSON.stringify(configs[0], null, 2)}</pre>}*/}
             {/*{tokenizers && <pre>TOKENIZERS:{JSON.stringify(tokenizers[0], null, 2)}</pre>}*/}
@@ -99,20 +98,36 @@ export default function SentimentAnalysisForm({data}: { data: { text: string, la
             {/*{labels_trues && <pre>LABELS TRUE:{JSON.stringify(labels_trues[0], null, 2)}</pre>}*/}
             <Accordion defaultActiveKey={String(0)}>
                 {scores && reports && predictions && scores.map((score, i) => (
-                    <Accordion.Item eventKey={String(i)} key={i}>
-                        <Accordion.Header>
-                            <HandThumb score={score[1]} rem={2}/>
-                            <span className={'h1'}>{score[0]}</span>
-                        </Accordion.Header>
-                        <Accordion.Body>
-                            {/*<p>{Object(reports[i][0])}</p>*/}
-                            {/*<p>{Object(Object(reports[i][1]))['1'].precision}</p>*/}
-                            <p>SCORE: {Object(Object(predictions[i][1])[0]).score}</p>
-                        </Accordion.Body>
-                    </Accordion.Item>
-                ))}
+                        <Accordion.Item eventKey={String(i)} key={i}>
+                            <Accordion.Header>
+                                <HandThumb score={score[1]} rem={2}/>
+                                <span className={'h1'}>{score[0]}</span>
+                            </Accordion.Header>
+                            <Accordion.Body>
+                                <p>SCORE: {Object(predictions[i]).score}</p>
+                                <p>REPORTS:</p>
+                                {Object.keys(reports[i]).map((key: string, n: number) => (
+                                        <Container key={n}>
+                                            <Row className={'row-cols-auto'}>
+                                                <Col className={'col-2'}><b>{key}</b></Col>
+                                                {typeof reports[i][key] != 'object' &&
+                                                    <Col>{reports[i][key]}</Col>
+                                                }
+                                                {Object.keys(reports[i][key]).map((y, x) => (
+                                                    <Col key={x}>{y} : {reports[i][key][y]}</Col>
+                                                ))}
+                                            </Row>
+                                        </Container>
+                                    )
+                                )}
+                            </Accordion.Body>
+                        </Accordion.Item>
+                    )
+                )}
             </Accordion>
-            {error && <p style={{color: "red"}}>Error: {error}</p>}
+            {
+                error && <p style={{color: "red"}}>Error: {error}</p>
+            }
         </Container>
     );
 }

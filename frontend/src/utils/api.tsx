@@ -16,6 +16,13 @@ export const fetch_isotope_items = async () => {
     return response.data;
 };
 
+export const fetch_carousel_data = async () => {
+    const response = await axios.get(`${api_url}/recommenders/`);
+    console.log('response:', response.data)
+    return response.data;
+};
+
+
 export const check_items = async (data: string[]) => {
     return await axios.post(`${api_url}/check`, data);
 };

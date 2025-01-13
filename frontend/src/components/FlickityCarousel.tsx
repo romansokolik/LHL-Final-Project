@@ -29,17 +29,16 @@ const FlickityCarousel: React.FC<FlickityCarouselProps> = ({options, children}) 
     return (
         <div ref={flickityRef}>
             {children}
-            <div className="carousel-cell" style={{width: '300px', height: '200px', background: 'red'}}>Slide 1
-            </div>
-            <div className="carousel-cell" style={{width: '300px', height: '200px', background: 'blue'}}>Slide 2
-            </div>
-            <div className="carousel-cell" style={{width: '300px', height: '200px', background: 'green'}}>Slide 3
-            </div>
-            <div className="carousel-cell" style={{width: '300px', height: '200px', background: 'yellow'}}>Slide 3
-            </div>
-            <div className="carousel-cell" style={{width: '300px', height: '200px', background: 'gold'}}>Slide 3
-            </div>
-
+            {/*<div className="carousel-cell" style={{width: '300px', height: '200px', background: 'red'}}>Slide 1*/}
+            {/*</div>*/}
+            {/*<div className="carousel-cell" style={{width: '300px', height: '200px', background: 'blue'}}>Slide 2*/}
+            {/*</div>*/}
+            {/*<div className="carousel-cell" style={{width: '300px', height: '200px', background: 'green'}}>Slide 3*/}
+            {/*</div>*/}
+            {/*<div className="carousel-cell" style={{width: '300px', height: '200px', background: 'yellow'}}>Slide 3*/}
+            {/*</div>*/}
+            {/*<div className="carousel-cell" style={{width: '300px', height: '200px', background: 'gold'}}>Slide 3*/}
+            {/*</div>*/}
         </div>
     );
 };

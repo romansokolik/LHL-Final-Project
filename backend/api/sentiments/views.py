@@ -97,24 +97,27 @@ def check(request):
         )
 
     lst = list(results['prediction_labels'])
-    lst = [
-        {'scores': list(results['prediction_labels'].items())},
-        {'reports': list(results['reports'].items())},
-        {'predictions': list(results['predictions'].items())},
-        # {'models': list(results['models'])},  # vJust the names of the models
-        # {'labels_true': list(results['labels_true'].items())}
-        # {'nlps': list(results['nlps'])},
-        # {'config': list(results['config'])},
-        # {'tokenizers': list(results['tokenizers'])},
-    ]
+    results = {
+        'results': {
+            'scores': list(results['prediction_labels'].items()),
+            'reports': list(results['reports'].items()),
+            'predictions': list(results['predictions'].items()),
+            # {'models': list(results['models'])},  # vJust the names of the models
+            # {'labels_true': list(results['labels_true'].items())}
+            # {'nlps': list(results['nlps'])},
+            # {'config': list(results['config'])},
+            # {'tokenizers': list(results['tokenizers'])},
+        }
+    }
     # print('lst:', pprint(lst))
+    # print('\n\n predictions:', pprint(results['predictions']), type(results['predictions']))
+    # print('\n\n reports:', pprint(results['reports']), type(results['reports']))
+    # print('\n\n scores:', pprint(results['prediction_labels']), type(results['prediction_labels']))
+
     # print('\n\n nlps:', pprint(results['nlps']),type(results['nlps']))
     # print('\n\n config:', pprint(results['config']),type(results['config']))
     # print('\n\n tokenizers:', pprint(results['tokenizers']), type(results['tokenizers']))
     # print('\n\n models:', pprint(results['models']), type(results['models']))
-    print('\n\n predictions:', pprint(results['predictions']), type(results['predictions']))
-    print('\n\n reports:', pprint(results['reports']), type(results['reports']))
-    print('\n\n scores:', pprint(results['prediction_labels']), type(results['prediction_labels']))
     # print('\n\n labels_true:', pprint(results['labels_true']), type(results['labels_true']))
     # lst = list({'predictions': results['prediction_labels'].items()})
     # , {'results': results.items()}
@@ -130,5 +133,5 @@ def check(request):
 
     # print('results:', pprint(results['predictions']))
     # print('results:', lst)
-    return HttpResponse(json.dumps(lst))
-    # return JsonResponse(lst, status=200)
+    # return HttpResponse(json.dumps(lst), content_type='application/json')
+    return JsonResponse(results, status=200)
