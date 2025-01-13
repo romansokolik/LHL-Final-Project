@@ -171,4 +171,4 @@ cython_debug/
 .pypirc
 /work/
 /test/
-*/.DS_Store
+*/*.DS_Store
