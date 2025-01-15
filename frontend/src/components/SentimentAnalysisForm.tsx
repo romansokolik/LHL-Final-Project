@@ -82,10 +82,10 @@ export default function SentimentAnalysisForm({data}: { data: { text: string, la
                 </label>
             </div>
             <div className="container my-3">
-                <LoadingButton
-                    onButtonClickAction={handleAction}
-                    loading={loading}
-                    label={'Sentiment Analysis'}
+                <LoadingButton classes={'btn-lg'}
+                               onButtonClickAction={handleAction}
+                               loading={loading}
+                               label={'Sentiment Analysis'}
                 />
             </div>
             {/*{scores && <pre>SCORES:{JSON.stringify(scores[0], null, 2)}</pre>}*/}
@@ -96,7 +96,7 @@ export default function SentimentAnalysisForm({data}: { data: { text: string, la
             {/*{tokenizers && <pre>TOKENIZERS:{JSON.stringify(tokenizers[0], null, 2)}</pre>}*/}
             {/*{models && <pre>MODELS:{JSON.stringify(models[0], null, 2)}</pre>}*/}
             {/*{labels_trues && <pre>LABELS TRUE:{JSON.stringify(labels_trues[0], null, 2)}</pre>}*/}
-            <Accordion defaultActiveKey={String(0)}>
+            <Accordion className={'accordion-flush'} defaultActiveKey={String(0)}>
                 {scores && reports && predictions && scores.map((score, i) => (
                         <Accordion.Item eventKey={String(i)} key={i}>
                             <Accordion.Header>

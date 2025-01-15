@@ -7,9 +7,10 @@ type LoadingButtonProps = {
     onButtonClickAction: () => void; // Define the function's type
     loading?: boolean; // Optional prop
     label: string;
+    classes?: string;
 };
 
-export default function LoadingButton({onButtonClickAction, loading, label}: LoadingButtonProps) {
+export default function LoadingButton({onButtonClickAction, loading, label, classes}: LoadingButtonProps) {
     const [isLoading, setIsLoading] = useState(loading || false);
 
     useEffect(() => {
@@ -28,6 +29,7 @@ export default function LoadingButton({onButtonClickAction, loading, label}: Loa
             variant="primary"
             disabled={isLoading} // Disable button if loading
             onClick={!isLoading ? handleClick : undefined} // Prevent double-clicks
+            className={classes}
         >
             {isLoading ? 'Loading…' : label}
         </Button>

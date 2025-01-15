@@ -2,6 +2,7 @@ import Link from "next/link";
 import Container from "react-bootstrap/Container";
 import Hamburger from "@/components/Hamburger";
 import SearchForm from "@/components/SearchForm";
+import Image from "next/image";
 
 export default function Navbar() {
     const links = [
@@ -9,9 +10,12 @@ export default function Navbar() {
         {href: "/recommenders/", text: "Recommenders"},
     ];
     return (
-        <nav className="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+        <nav className="navbar navbar-expand-md navbar-dark fixed-top bg-dark my-0 py-1">
             <Container fluid>
-                <Link className="navbar-brand" href="/">LHL Final Project</Link>
+                <Link className="navbar-brand" href="/">
+                    <Image src={'/images/falcon.png'}  priority={true}
+                           width={40} height={40} alt={'Roman Sokolik'} title={'Roman Sokolik'}/>
+                </Link>
                 <Hamburger/>
                 <div className="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul className="navbar-nav me-auto mb-2 mb-lg-0">

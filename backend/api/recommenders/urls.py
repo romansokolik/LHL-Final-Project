@@ -6,5 +6,6 @@ from . import views
 urlpatterns = [
     # path('/', include('.urls')),
     path('', views.index, name='index'),
-    path('movie', views.movie, name='movie'),
+    path('movies/<int:tmdb_id>/', views.movies, name='movie'),
+    path('contents-based/<int:tmdb_id>/', views.contents_based, name='contents_based'),
 ]

@@ -11,13 +11,26 @@ interface FlickityCarouselProps {
     children: React.ReactNode;
 }
 
-const FlickityCarousel: React.FC<FlickityCarouselProps> = ({options, children}) => {
+const defaultFlickityOptions: Flickity.Options = {
+    cellAlign: 'center',
+    contain: true,
+    wrapAround: true,
+    autoPlay: true,
+    lazyLoad: true,
+    imagesLoaded: true,
+    pageDots: false
+};
+
+const FlickityCarousel: React.FC<FlickityCarouselProps> = ({options = {}, children}) => {
     const flickityRef = useRef<HTMLDivElement>(null);
     const flickityInstance = useRef<Flickity | null>(null);
 
     useEffect(() => {
+        // Merge custom options with defaults
+        const mergedOptions = {...defaultFlickityOptions, ...options};
+        // Initialize Flickity instance
         if (flickityRef.current) {
-            flickityInstance.current = new Flickity(flickityRef.current, options || {});
+            flickityInstance.current = new Flickity(flickityRef.current,  mergedOptions);
         }
 
         return () => {
@@ -29,15 +42,12 @@ const FlickityCarousel: React.FC<FlickityCarouselProps> = ({options, children}) 
     return (
         <div ref={flickityRef}>
             {children}
+            {/*{children && Object(children).map((child: string, index: number) => (*/}
+            {/*    <div key={index} className="carousel-cell p-1">*/}
+            {/*        {child}*/}
+            {/*    </div>*/}
+            {/*))}*/}
             {/*<div className="carousel-cell" style={{width: '300px', height: '200px', background: 'red'}}>Slide 1*/}
-            {/*</div>*/}
-            {/*<div className="carousel-cell" style={{width: '300px', height: '200px', background: 'blue'}}>Slide 2*/}
-            {/*</div>*/}
-            {/*<div className="carousel-cell" style={{width: '300px', height: '200px', background: 'green'}}>Slide 3*/}
-            {/*</div>*/}
-            {/*<div className="carousel-cell" style={{width: '300px', height: '200px', background: 'yellow'}}>Slide 3*/}
-            {/*</div>*/}
-            {/*<div className="carousel-cell" style={{width: '300px', height: '200px', background: 'gold'}}>Slide 3*/}
             {/*</div>*/}
         </div>
     );

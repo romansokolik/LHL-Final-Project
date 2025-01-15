@@ -12,15 +12,27 @@ export const fetch_home_items = async () => {
 
 export const fetch_isotope_items = async () => {
     const response = await axios.get(`${api_url}/recommenders/`);
-    console.log('response:', response.data)
+    // console.log('response:', response.data)
     return response.data;
 };
 
 export const fetch_carousel_data = async () => {
     const response = await axios.get(`${api_url}/recommenders/`);
-    console.log('response:', response.data)
+    // console.log('response:', response.data)
     return response.data;
 };
+
+// interface RecommenderResponse {
+//     recommendations: string[];
+//     // Add other fields as needed
+// }
+
+export const fetch_recommender_data = async (mode: string, tmdb_id: string) => {
+    const url = `${api_url}/recommenders/${mode}/${tmdb_id}`;
+    // console.log('url:', url);
+    const response = await axios.get(url);
+    return response.data;
+}
 
 
 export const check_items = async (data: string[]) => {

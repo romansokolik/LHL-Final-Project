@@ -4,6 +4,7 @@
 // import styles from "./page.module.styles";
 import {useEffect, useState} from "react";
 import {fetch_home_items, fetch_get_data, fetch_post_data} from '@/utils/api';
+import Image from "next/image";
 
 export default function Home() {
     const [items, setItems] = useState([]);
@@ -42,10 +43,11 @@ export default function Home() {
     return (
         <div className={'d-flex h-100 text-center'}>
             <div className="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
-                <h1>LHL - Final Project</h1>
-                <p className="lead">Cover is a one-page template for building simple and beautiful home pages.
-                    Download,
-                    edit the text, and add your own fullscreen background photo to make it your own.</p>
+                <Image src={'/images/Lighthouse-Labs.png'} alt={'Lighthouse Labs'} priority={false}
+                       width={480} height={100} className={'image-fluid w-25 h-auto mx-auto my-3'}/>
+                <h1 className={'h1'}>DATA SCIENCE - FINAL PROJECT</h1>
+                <Image src={'/images/Data-Science.png'} alt={'Data Science'} priority={true}
+                       width={1400} height={725} className={'image-fluid w-75 h-auto mx-auto'}/>
                 <p className="lead">
                     <a href="#" className="btn btn-lg btn-light fw-bold border-white bg-white">Learn more</a>
                 </p>
