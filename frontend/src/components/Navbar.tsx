@@ -1,13 +1,15 @@
 import Link from "next/link";
 import Container from "react-bootstrap/Container";
 import Hamburger from "@/components/Hamburger";
-import SearchForm from "@/components/SearchForm";
+// import SearchForm from "@/components/SearchForm";
 import Image from "next/image";
 
 export default function Navbar() {
     const links = [
-        {href: "/sentiment-analysis/", text: "Sentiment Analysis"},
+        {href: "/about/", text: "About"},
+        {href: "/datasets/", text: "Datasets"},
         {href: "/recommenders/", text: "Recommenders"},
+        {href: "/sentiment-analysis/", text: "Sentiment Analysis"},
     ];
     return (
         <nav className="navbar navbar-expand-md navbar-dark fixed-top bg-dark my-0 py-1">

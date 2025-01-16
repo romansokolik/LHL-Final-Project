@@ -16,7 +16,7 @@ export const fetch_isotope_items = async () => {
     return response.data;
 };
 
-export const fetch_carousel_data = async () => {
+export const fetch_compare_poster_data = async () => {
     const response = await axios.get(`${api_url}/recommenders/`);
     // console.log('response:', response.data)
     return response.data;
@@ -29,7 +29,7 @@ export const fetch_carousel_data = async () => {
 
 export const fetch_recommender_data = async (mode: string, tmdb_id: string) => {
     const url = `${api_url}/recommenders/${mode}/${tmdb_id}`;
-    // console.log('url:', url);
+    console.log('url:', url);
     const response = await axios.get(url);
     return response.data;
 }
