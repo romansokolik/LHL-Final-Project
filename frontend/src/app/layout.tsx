@@ -1,3 +1,4 @@
+// import {Geist, Geist_Mono} from "next/font/google";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.min.css';
 // import 'flickity/dist/flickity.min.styles';
@@ -14,6 +15,16 @@ export const metadata = {
     description: "LightHouse Labs Immersive BootCamp",
 };
 
+// const geistSans = Geist({
+//     variable: "--font-geist-sans",
+//     subsets: ["latin"],
+// });
+//
+// const geistMono = Geist_Mono({
+//     variable: "--font-geist-mono",
+//     subsets: ["latin"],
+// });
+
 export default function Layout(
     {children}: { children: React.ReactNode }) {
     return (
@@ -23,7 +34,8 @@ export default function Layout(
             <title>{metadata.title}</title>
             <link rel={'icon'} href={'favicon.ico'}/>
         </head>
-        <body>
+        {/*<body className={`${geistSans.variable} ${geistMono.variable} bg-body-tertiary`}>*/}
+        <body className={' bg-body-tertiary'}>
         <Container>
             <header style={{minHeight: '4.5rem'}}></header>
             <Navbar/>
@@ -35,5 +47,5 @@ export default function Layout(
         {/*<Script type={'text/javascript'} src={'/static/js/isotope.pkgd.min.js'}></Script>*/}
         </body>
         </html>
-    )
+)
 }

@@ -1,6 +1,6 @@
 export default function Page() {
     return (
-        <>
+        <div className={'w-75'}>
             <h1>About The Project</h1>
             <ul>
                 <li>This is a web application - a movie recommendation engine.</li>
@@ -37,6 +37,6 @@ export default function Page() {
                 <li>Image Recognition</li>
                 <li>NLP</li>
             </ul>
-        </>
+        </div>
     );
 }

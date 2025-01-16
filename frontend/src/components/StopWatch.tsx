@@ -3,7 +3,8 @@
 import {useState, useEffect} from "react";
 
 export default function StopWatch() {
-    const [time, setTime] = useState(300);
+    const duration = 300;
+    const [time, setTime] = useState(duration);
     const [isRunning, setIsRunning] = useState(false);
 
     useEffect(() => {
@@ -34,17 +35,19 @@ export default function StopWatch() {
 
 
     return (
-        <div id="stopwatch" className="container text-center">
-            <div className="row">
-                <button className="btn btn-primary col" onClick={() => setIsRunning(!isRunning)}>
-                    {isRunning ? "Pause" : "Start"}
+        <div id="stopwatch" className="container text-center" style={{width: '14rem'}}>
+            <div className="row m-0 p-0">
+                <button className="col-3 btn btn-sm btn-primary p-0 m-0" onClick={() => setIsRunning(!isRunning)}>
+                    {/*{isRunning ? 'Pause' : 'Play'}*/}
+                    <i className={`bi bi-${isRunning ? 'pause' : 'play'}-fill`}/>
                 </button>
-                <h1 className="col text-bg-secondary p-2 m-0">{formatTime(time)}</h1>
-                <button className="btn btn-danger col" onClick={() => {
-                    setTime(300);
+                <h3 className="col text-bg-secondary p-0 m-0">{formatTime(time)}</h3>
+                <button className="col-3 btn btn-sm btn-danger" onClick={() => {
+                    setTime(duration);
                     setIsRunning(false);
                 }}>
-                    Reset
+                    {/*Reset*/}
+                    <i className={`bi bi-arrow-counterclockwise`}/>
                 </button>
             </div>
         </div>

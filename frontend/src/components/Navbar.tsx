@@ -3,6 +3,7 @@ import Container from "react-bootstrap/Container";
 import Hamburger from "@/components/Hamburger";
 // import SearchForm from "@/components/SearchForm";
 import Image from "next/image";
+import StopWatch from "@/components/StopWatch";
 
 export default function Navbar() {
     const links = [
@@ -20,6 +21,7 @@ export default function Navbar() {
                     {/*       width={40} height={40} alt={'Roman Sokolik'} title={'Roman Sokolik'}/>*/}
                     Roman Sokolik
                 </Link>
+
                 <Hamburger/>
                 <div className="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul className="navbar-nav me-auto mb-2 mb-lg-0">
@@ -33,6 +35,7 @@ export default function Navbar() {
                     </ul>
                     {/*<SearchForm/>*/}
                 </div>
+                <StopWatch/>
             </Container>
         </nav>
     );

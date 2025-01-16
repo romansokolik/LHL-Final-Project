@@ -1,6 +1,6 @@
 export default function Page() {
     return (
-        <>
+        <div className={'w-75'}>
             <h1>The Data</h1>
             <ul>
                 <li>GroupLens Dataset</li>
@@ -16,12 +16,9 @@ export default function Page() {
                 <li>Data Splitting</li>
             </ul>
             <p>
-                Most of the data has been preprocessed and transformed into a format that can be used by the machine
-                learning
-                models.
-                Information such as movie titles, genres, ratings, and reviews have been extracted from the datasets and
-                distributed as CSV files.
+                Most of the data has been preprocessed and transformed into a format that can be used by the machine learning models.
+                Information such as movie titles, genres, ratings, and reviews have been extracted from the datasets and distributed as CSV files.
             </p>
-        </>
+        </div>
     );
 }
