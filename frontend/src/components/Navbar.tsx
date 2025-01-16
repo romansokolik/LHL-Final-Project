@@ -10,6 +10,7 @@ export default function Navbar() {
         {href: "/datasets/", text: "Datasets"},
         {href: "/recommenders/", text: "Recommenders"},
         {href: "/sentiment-analysis/", text: "Sentiment Analysis"},
+        {href: "/references/", text: "References"},
     ];
     return (
         <nav className="navbar navbar-expand-md navbar-dark fixed-top bg-dark my-0 py-1">
