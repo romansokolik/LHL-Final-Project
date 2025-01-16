@@ -16,8 +16,9 @@ export default function Navbar() {
         <nav className="navbar navbar-expand-md navbar-dark fixed-top bg-dark my-0 py-1">
             <Container fluid>
                 <Link className="navbar-brand" href="/">
-                    <Image src={'/images/falcon.png'}  priority={true}
-                           width={40} height={40} alt={'Roman Sokolik'} title={'Roman Sokolik'}/>
+                    {/*<Image src={'/images/falcon.png'}  priority={true}*/}
+                    {/*       width={40} height={40} alt={'Roman Sokolik'} title={'Roman Sokolik'}/>*/}
+                    Roman Sokolik
                 </Link>
                 <Hamburger/>
                 <div className="collapse navbar-collapse" id="navbarSupportedContent">

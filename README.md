@@ -51,5 +51,32 @@ Information such as movie titles, genres, ratings, and reviews have been extract
 - Active Learning
 - Unsupervised Learning
 - Image Recognition
-- NLP
+- NLP, LLM
+
+### References
+# References
+
+- [LighthouseLabs](https://www.lighthouselabs.ca/)
+- [React](https://reactjs.org/)
+- [Node.js](https://nodejs.org/)
+- [Express](https://expressjs.com/)
+- [PostgreSQL](https://www.postgresql.org/)
+- [Sqlite3](https://www.sqlite.org/index.html)
+- [Django](https://www.djangoproject.com/)
+- [Flask](https://flask.palletsprojects.com/en/1.1.x/)
+- [Next.js](https://nextjs.org/)
+- [Bootstrap](https://getbootstrap.com/)
+- [Flickity](https://flickity.metafizzy.co/)
+- [Real Python](https://realpython.com/)
+- [Hugging Face](https://huggingface.co/)
+- [Kaggle](https://www.kaggle.com/)
+- [Chat GPT](https://https://chatgpt.com/)
+- [MovieLens](https://movielens.org/)
+- [GroupLens Dataset](https://grouplens.org/datasets/movielens/)
+
+
+
+
+
+
 
