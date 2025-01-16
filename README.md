@@ -6,10 +6,20 @@ LighthouseLabs Final Project
 - The user can also see the recommendations of movies based on the ratings given by other users.
 - The user can search for movies, see the details of a movie, and rate a movie.
 
-### The Data
+### The data
 - GroupLens Dataset
 - MovieLens Dataset
 - Kaggle Dataset
+
+### Data preprocessing steps
+- Data Cleaning
+- Data Transformation
+- Data Normalization
+- Data Augmentation
+- Data Splitting
+
+Most of the data has been preprocessed and transformed into a format that can be used by the machine learning models.
+Information such as movie titles, genres, ratings, and reviews have been extracted from the datasets and distributed as CSV files.
 
 ### The concept?
 - The user wants to find a movie to watch.
