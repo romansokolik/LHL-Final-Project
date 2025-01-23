@@ -16,8 +16,6 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 # Create a database engine using SQLAlchemy
 engine = create_engine('sqlite:///../backend/db.sqlite3')
-# Create a connection object
-cursor = connection.cursor()
 
 # Load the VGG16 model
 vgg16 = VGG16(weights='imagenet', include_top=False, pooling='max', input_shape=(224, 224, 3))
@@ -129,6 +127,8 @@ def index(request):
     WHERE tmdb_id IN (SELECT tmdb_id FROM posters_tmdb ORDER BY RANDOM() LIMIT 60)
     """
 
+    # Create a connection object
+    cursor = connection.cursor()
     # print('query:', query)
     cursor.execute(query)
     results = cursor.fetchall()
@@ -158,6 +158,7 @@ def index(request):
     # print('ids:', ids)
 
     # print('genres:', list(genres.keys()))
+    connection.close()
     return JsonResponse({'slides': items, 'genres': list(genres.keys())})
 
 
@@ -240,7 +241,7 @@ def contents_based(request, tmdb_id, title='Toy Story'):
 
 
 def matched_posters(request, tmdb_id):
-    with open('../work/test/similarity-scores.json', 'r') as file:
+    with open('../data/similarity-scores.json', 'r') as file:
         json_data = json.load(file)
     posters = []
     for d in json_data:
@@ -257,17 +258,23 @@ def matched_posters(request, tmdb_id):
                     'tmdb_id': key,
                     'score': value
                 })
+                # Create a connection object
+                cursor = connection.cursor()
                 # Execute the query for multiple inserts
                 cursor.executemany(
                     'INSERT INTO poster_matches (base_id, match_id, score) '
                     'VALUES (?, ?, ?) '
                     'ON CONFLICT(base_id, match_id) '
                     'DO UPDATE SET score=excluded.score', matches)
+                connection.commit()
+                connection.close()
             break
     if len(posters) == 0:
         query = (
             f'SELECT match_id, score FROM poster_matches '
             f'WHERE base_id={tmdb_id} ORDER BY score DESC LIMIT 10;')
+        # Create a connection object
+        cursor = connection.cursor()
         # print('query:', query)
         cursor.execute(query)
         results = cursor.fetchall()
@@ -278,6 +285,7 @@ def matched_posters(request, tmdb_id):
                 'score': row[1]
             })
     # print('posters:', posters)
+    connection.close()
     return JsonResponse({'posters': posters})
 
 
@@ -292,6 +300,8 @@ def compare_poster(request, tmdb_id):
     query = (
         f'SELECT match_id, score FROM poster_matches '
         f'WHERE base_id={tmdb_id} ORDER BY score DESC LIMIT {top_n};')
+    # Create a connection object
+    cursor = connection.cursor()
     cursor.execute(query)
     results = cursor.fetchall()
     # print('results:', results)
@@ -320,21 +330,28 @@ def compare_poster(request, tmdb_id):
         if (i > 0 and i % 50 == 0) or i == len(tmdbs) - 1:
             data = [[tmdb_id, k, v] for k, v in top_n_scores.items()]
             # print('data:', data)
+            # Create a connection object
+            cursor = connection.cursor()
             # Execute the query for multiple inserts
             cursor.executemany(
                 'INSERT INTO poster_matches (base_id, match_id, score) '
                 'VALUES (?, ?, ?) '
                 'ON CONFLICT(base_id, match_id) '
                 'DO UPDATE SET score=excluded.score', data)
+            connection.commit()
+            connection.close()
             print(f'{i} images processed')
         # query = f"INSERT INTO poster_searches VALUES ({tmdb2}, {score});"
         # cursor.execute(query)
+        connection.close()
     return JsonResponse({'scores': top_n_scores})
 
 
 def poster_searches(request, tmdb_id):
     query = f'SELECT match_id, score FROM poster_matches WHERE base_id={tmdb_id} ORDER BY score DESC LIMIT 10;'
     # print('query:', query)
+    # Create a connection object
+    cursor = connection.cursor()
     cursor.execute(query)
     results = cursor.fetchall()
     scores = []
@@ -343,4 +360,5 @@ def poster_searches(request, tmdb_id):
             'tmdb_id': row[0],
             'score': row[1]
         })
+    connection.close()
     return JsonResponse({'scores': scores})
