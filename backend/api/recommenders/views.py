@@ -52,6 +52,17 @@ def get_image_embeddings(object_image: image):
     return vgg16.predict(image_array)
 
 
+def get_image_vector(image_path: str):
+    """
+        -----------------------------------------------------
+        Takes image array and computes its embedding using VGG16 model.
+        -----------------------------------------------------
+        return embedding of the image
+    """
+    image = load_image(image_path)
+    return get_image_embeddings(image)
+
+
 def get_similarity_score(first_image: str, second_image: str):
     """
         -----------------------------------------------------
@@ -59,10 +70,9 @@ def get_similarity_score(first_image: str, second_image: str):
         -----------------------------------------------------
         return embedding of the image
     """
-    first_image = load_image(first_image)
-    second_image = load_image(second_image)
-    first_image_vector = get_image_embeddings(first_image)
-    second_image_vector = get_image_embeddings(second_image)
+
+    first_image_vector = get_image_vector(first_image)
+    second_image_vector = get_image_vector(second_image)
     return cosine_similarity(first_image_vector, second_image_vector).reshape(1, )
 
 
@@ -236,7 +246,7 @@ def contents_based(request, tmdb_id, title='Toy Story'):
     # title = 'The Godfather'
     limit = 10
     recommendations = get_recommendations(df, cosine_sim, limit, tmdb_id, title)
-    # print(f'recommendations for "{tmdb_id} : {title}"', recommendations, sep='\n')
+    # print(f' recommendations for "{tmdb_id} : {title}"', recommendations, sep='\n')
     return JsonResponse({'results': recommendations.to_dict(orient='records')})
 
 
@@ -297,6 +307,7 @@ def compare_poster(request, tmdb_id):
     random.shuffle(tmdbs)
     top_n_scores = dict()
     top_n = 10
+    limit = 100
     query = (
         f'SELECT match_id, score FROM poster_matches '
         f'WHERE base_id={tmdb_id} ORDER BY score DESC LIMIT {top_n};')
@@ -310,14 +321,18 @@ def compare_poster(request, tmdb_id):
         top_n_scores[row[0]] = row[1]
     lowest = min(top_n_scores.values()) if len(top_n_scores) > 0 else 0
     match = lowest
+    img1 = f'{path}{tmdb_id}/w220_and_h330_face.jpg'
+    img_vector = get_image_vector(img1)
     # LOOP THROUGH ALL IMAGES
     for i, tmdb in enumerate(tmdbs):
+        if i >= limit: break
         # print('tmdb_id:', tmdb_id, 'tmdb:', tmdb)
         # Skip the same image
         if tmdb == tmdb_id: continue
-        img1 = f'{path}{tmdb_id}/w220_and_h330_face.jpg'
+        # img1 = f'{path}{tmdb_id}/w220_and_h330_face.jpg'
         img2 = f'{path}{tmdb}/w220_and_h330_face.jpg'
-        score = get_similarity_score(img1, img2)
+        img_vector2 = get_image_vector(img2)
+        score = cosine_similarity(img_vector, img_vector2).reshape(1, )
         score = round(float(score[0]), 7)
         if len(top_n_scores) >= top_n:
             if score > lowest:
@@ -327,7 +342,8 @@ def compare_poster(request, tmdb_id):
                 lowest = min(top_n_scores.values())
         else:
             top_n_scores[tmdb] = score
-        if (i > 0 and i % 50 == 0) or i == len(tmdbs) - 1:
+        n = i + 1
+        if (n > 1 and n % 10 == 0) or n == limit or n == len(tmdbs):
             data = [[tmdb_id, k, v] for k, v in top_n_scores.items()]
             # print('data:', data)
             # Create a connection object
@@ -340,7 +356,7 @@ def compare_poster(request, tmdb_id):
                 'DO UPDATE SET score=excluded.score', data)
             connection.commit()
             connection.close()
-            print(f'{i} images processed')
+            print(f'{n} images processed')
         # query = f"INSERT INTO poster_searches VALUES ({tmdb2}, {score});"
         # cursor.execute(query)
         connection.close()

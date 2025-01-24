@@ -1,9 +1,16 @@
 import IsotopeGallery from "@/components/IsotopeGallery";
 import axios from "axios";
 
+type Slide = {
+    tmdb_id: string;
+    title: string;
+    rating: string;
+    genre: string;
+};
+
 type Data = {
     genres: string[];
-    slides: string[][];
+    slides: Slide[];
 };
 
 export default async function Page() {

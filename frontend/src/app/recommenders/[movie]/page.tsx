@@ -26,7 +26,7 @@ export default function Page() {
 
     // Flickity options
     const flickityOptions = {}
-    const intervalTime = 5000; // Interval time in milliseconds (5 seconds)
+    const intervalTime = 1000; // Interval time in milliseconds
     function startFetchingData(id:string) {
         // return null;
         return setInterval(async () => {
@@ -67,12 +67,12 @@ export default function Page() {
             })();
             // Start fetching data
             const intervalId = startFetchingData(id);
-            const minutes = 30 * 60000;
+            const minutes = .25;
             // Example: Stopping it after 30 seconds
             setTimeout(() => {
                 clearInterval(intervalId);
                 console.log('Stopped fetching data');
-            }, minutes); // Stops after 10 minutes
+            }, minutes * 60000); // Stops after 10 minutes
         });
     }, []);
 
