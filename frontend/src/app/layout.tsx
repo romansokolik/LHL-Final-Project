@@ -32,7 +32,7 @@ export default function Layout(
         <head>
             <meta charSet="UTF-8"/>
             <title>{metadata.title}</title>
-            <link rel={'icon'} href={'favicon.ico'}/>
+            <link rel={'icon'} href={'/images/favicon.ico'}/>
         </head>
         {/*<body className={`${geistSans.variable} ${geistMono.variable} bg-body-tertiary`}>*/}
         <body className={' bg-body-tertiary'}>
@@ -47,5 +47,5 @@ export default function Layout(
         {/*<Script type={'text/javascript'} src={'/static/js/isotope.pkgd.min.js'}></Script>*/}
         </body>
         </html>
-)
+    )
 }

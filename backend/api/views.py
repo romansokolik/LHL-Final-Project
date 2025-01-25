@@ -7,7 +7,7 @@ from rest_framework.decorators import api_view
 from rest_framework.urls import app_name
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .models import MyModel
+from .models import Movie, Link
 from .serializers import MyModelSerializer
 
 
@@ -21,18 +21,26 @@ def index(request):
     ]
     return HttpResponse(json.dumps({'items': items}))
 
-#This approach disables CSRF protection for a specific view. Use it only for testing purposes or if the endpoint does not require CSRF protection.
+
+# This approach disables CSRF protection for a specific view. Use it only for testing purposes or if the endpoint does not require CSRF protection.
 # @csrf_exempt
-#Use Django REST Framework's @api_view with CSRF Disabled
-@api_view(['GET','POST'])
+# Use Django REST Framework's @api_view with CSRF Disabled
+@api_view(['GET', 'POST'])
 def check(request):
     print('request method:', request.method)
     # request_data = request.GET
     return JsonResponse("Hello, world. You're at the project/check index.", safe=False)
 
 
-class MyModelView(APIView):
+class MovieView(APIView):
     def get(self, request):
-        items = MyModel.objects.all()
+        items = Movie.objects.all()
+        serializer = MyModelSerializer(items, many=True)
+        return Response(serializer.data)
+
+
+class LinkView(APIView):
+    def get(self, request):
+        items = Link.objects.all()
         serializer = MyModelSerializer(items, many=True)
         return Response(serializer.data)

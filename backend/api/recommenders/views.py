@@ -113,14 +113,14 @@ def get_random_number():
 
 
 def index(request):
-    # qry = "SELECT tmdbId FROM posters_tmdb"
+    # qry = "SELECT tmdbId FROM tmdb_posters"
     # with connection.cursor() as cursor:
     query = (
-        "SELECT tmdb_id, genres FROM posters_tmdb "
+        "SELECT tmdb_id, genres FROM tmdb_posters "
         "JOIN links l USING(tmdb_id) "
         "JOIN movies m USING(movie_id) "
         "JOIN (SELECT ROUND(AVG(rating),1) AS avg_rating FROM ratings GROUP BY user_id) USING(movie_id)"
-        "WHERE tmdb_id IN (SELECT tmdb_id FROM main.posters_tmdb ORDER BY RANDOM() LIMIT 60)"
+        "WHERE tmdb_id IN (SELECT tmdb_id FROM main.tmdb_posters ORDER BY RANDOM() LIMIT 60)"
     )
     query = """
     WITH T1 AS (
@@ -129,32 +129,28 @@ def index(request):
     )
     , T2 AS (
         SELECT DISTINCT tmdb_id, movie_id, title, genres 
-        FROM posters_tmdb
+        FROM tmdb_posters
         LEFT JOIN links l USING (tmdb_id)
         LEFT JOIN movies m USING (movie_id)
     )
     SELECT * FROM T2 LEFT JOIN T1 USING(movie_id)
-    WHERE tmdb_id IN (SELECT tmdb_id FROM posters_tmdb ORDER BY RANDOM() LIMIT 60)
+    WHERE tmdb_id IN (SELECT tmdb_id FROM tmdb_posters ORDER BY RANDOM() LIMIT 60)
     """
-
     # Create a connection object
     cursor = connection.cursor()
     # print('query:', query)
     cursor.execute(query)
     results = cursor.fetchall()
-    # print('cwd:', getcwd())
     items = []
     genres = {}
     ids = []
     # Select only those posters that exist
     for row in results:
-        # if not f'../frontend/public/images/posters/tmdb/{row[0]}/w220_and_h330_face.jpg': continue
         tmdb_id = row[0]
         movie_id = row[1]
         arr = row[3].split('|')
         [genres.update({genre: 1}) for genre in arr if genre not in ['(no genres listed)']]
         genre = ' '.join(arr)
-        # weight = get_random_number()
         title = row[2]
         rating = row[4] if row[4] is not None else 2.5
         items.append({
@@ -164,9 +160,6 @@ def index(request):
             'title': title,
             'movie_id': movie_id
         })
-        # else: ids.append(row[0])
-    # print('ids:', ids)
-
     # print('genres:', list(genres.keys()))
     connection.close()
     return JsonResponse({'slides': items, 'genres': list(genres.keys())})
@@ -179,11 +172,16 @@ def movies(request):
 def contents_based(request, tmdb_id, title='Toy Story'):
     # Function that takes in movie title as input and outputs most similar movies
     def get_recommendations(df, cosine_sim, limit=10, tmdb_id=None, title=None):
+        print('cosine_sim:', cosine_sim.shape)
         # Construct a reverse map of indices and movie titles
         index_col = 'tmdb_id' if tmdb_id is not None else 'title'
         indices = pd.Series(df.index, index=df[index_col]).drop_duplicates()
         # print('indices:', indices[:10])
-        # Get the index of the movie that matches the title
+        # Get the index of the movie that matches the title or tmdb_id
+        # Check if indices[tmdb_id] exists
+        if tmdb_id not in indices:
+            print('tmdb_id not found')
+            return pd.DataFrame({'tmdb_id': [], 'title': []})
         idx = indices[tmdb_id if tmdb_id is not None else title]
         # Get the pairwise similarity scores of all movies with that movie
         # print('imdb_id:', tmdb_id, 'idx:', idx, 'title:', f'"{title}"')
@@ -198,31 +196,16 @@ def contents_based(request, tmdb_id, title='Toy Story'):
         return df[['tmdb_id', 'title']].iloc[movie_indices]
 
     # Query the database
-    # query = f"SELECT title FROM recommender_contents_based WHERE tmdb_id = {tmdb_id};"
-    # cursor.execute(query)
-    # results = cursor.fetchall()
-    # #Get the title for the tmdb_id if it exists
-    # title = results[0][0] if results else None
-    query = (
-        # "DROP TABLE IF EXISTS recommender_contents_based; "
-        # "CREATE TABLE IF NOT EXISTS recommender_contents_based AS "
-        # # # "CREATE VIEW IF NOT EXISTS view_contents_based AS ("
-        # "SELECT DISTINCT tmdb_id, title, original_title, overview "
-        # "FROM posters_tmdb pt "
-        # "LEFT JOIN movies_metadata mm ON pt.tmdb_id = mm.id "
-        # # "LEFT JOIN links l USING(tmdb_id) "
-        # # "LEFT JOIN movies_metadata mm ON l.tmdb_id = mm.id "
-        # # ")"
-        # # "SELECT * FROM view_contents_based;"
-        "SELECT * FROM recommender_contents_based;"
-    )
+    query = "SELECT * FROM content_based_recommendations;"
     # print('query:', query)
     # Use Pandas' `read_sql_query` method to directly fetch the query results into a DataFrame
     # # WARNING: pandas only supports SQLAlchemy connectable (engine/connection) or database string URI or sqlite3 DBAPI2 connection. Other DBAPI2 objects are not tested. Please consider using SQLAlchemy.
     # df = pd.read_sql_query(query, connection)
     # Use Pandas to read the query result directly
     df = pd.read_sql_query(query, engine)
-    # df = pd.read_csv('../data/ml-latest-small/movies_metadata.csv', low_memory=False)
+    # print('df:', df.head())
+    # return
+    # df = pd.read_csv('../data/ml-latest-small/metadata_movies.csv', low_memory=False)
     # df = df[['id', 'title', 'original_title', 'overview']]
     # df.rename(columns={'id': 'tmdb_id'}, inplace=True)
     # print('df:', df.head())
@@ -232,6 +215,8 @@ def contents_based(request, tmdb_id, title='Toy Story'):
     tfidf = TfidfVectorizer(stop_words='english')
     # Replace NaN with an empty string
     df['overview'] = df['overview'].fillna('')
+    # print('df:', df['overview'][df['id'] == tmdb_id])
+    # return
     # Construct the required TF-IDF matrix by fitting and transforming the data
     tfidf_matrix = tfidf.fit_transform(df['overview'])
     # # Output the shape of tfidf_matrix
@@ -251,49 +236,21 @@ def contents_based(request, tmdb_id, title='Toy Story'):
 
 
 def matched_posters(request, tmdb_id):
-    with open('../data/similarity-scores.json', 'r') as file:
-        json_data = json.load(file)
     posters = []
-    for d in json_data:
-        # print('d:', type(d), list(d.keys())[0])
-        if list(d.keys())[0] == str(tmdb_id):
-            # print('key:', tmdb_id, 'value:', list(d.values())[0])
-            data = list(d.values())[0]
-            # print('data:', type(data), data)
-            matches = []
-            for key, value in data.items():
-                matches.append([tmdb_id, key, value])
-                # print('key:', key, 'value:', value)
-                posters.append({
-                    'tmdb_id': key,
-                    'score': value
-                })
-                # Create a connection object
-                cursor = connection.cursor()
-                # Execute the query for multiple inserts
-                cursor.executemany(
-                    'INSERT INTO poster_matches (base_id, match_id, score) '
-                    'VALUES (?, ?, ?) '
-                    'ON CONFLICT(base_id, match_id) '
-                    'DO UPDATE SET score=excluded.score', matches)
-                connection.commit()
-                connection.close()
-            break
-    if len(posters) == 0:
-        query = (
-            f'SELECT match_id, score FROM poster_matches '
-            f'WHERE base_id={tmdb_id} ORDER BY score DESC LIMIT 10;')
-        # Create a connection object
-        cursor = connection.cursor()
-        # print('query:', query)
-        cursor.execute(query)
-        results = cursor.fetchall()
-        scores = []
-        for row in results:
-            posters.append({
-                'tmdb_id': row[0],
-                'score': row[1]
-            })
+    query = (
+        f'SELECT match_id, score FROM poster_matches '
+        f'WHERE base_id={tmdb_id} ORDER BY score DESC LIMIT 10;')
+    # Create a connection object
+    cursor = connection.cursor()
+    # print('query:', query)
+    cursor.execute(query)
+    results = cursor.fetchall()
+    scores = []
+    for row in results:
+        posters.append({
+            'tmdb_id': row[0],
+            'score': row[1]
+        })
     # print('posters:', posters)
     connection.close()
     return JsonResponse({'posters': posters})
@@ -329,7 +286,6 @@ def compare_poster(request, tmdb_id):
         # print('tmdb_id:', tmdb_id, 'tmdb:', tmdb)
         # Skip the same image
         if tmdb == tmdb_id: continue
-        # img1 = f'{path}{tmdb_id}/w220_and_h330_face.jpg'
         img2 = f'{path}{tmdb}/w220_and_h330_face.jpg'
         img_vector2 = get_image_vector(img2)
         score = cosine_similarity(img_vector, img_vector2).reshape(1, )
@@ -354,11 +310,11 @@ def compare_poster(request, tmdb_id):
                 'VALUES (?, ?, ?) '
                 'ON CONFLICT(base_id, match_id) '
                 'DO UPDATE SET score=excluded.score', data)
+            # print last query
+            # print(cursor.query)
             connection.commit()
             connection.close()
             print(f'{n} images processed')
-        # query = f"INSERT INTO poster_searches VALUES ({tmdb2}, {score});"
-        # cursor.execute(query)
         connection.close()
     return JsonResponse({'scores': top_n_scores})
 
@@ -368,7 +324,9 @@ def poster_searches(request, tmdb_id):
     # print('query:', query)
     # Create a connection object
     cursor = connection.cursor()
+    # Execute the query
     cursor.execute(query)
+    # Fetch all the results
     results = cursor.fetchall()
     scores = []
     for row in results:
