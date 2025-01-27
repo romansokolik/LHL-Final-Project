@@ -1,4 +1,3 @@
-// components/FlickityCarousel.tsx
 'use client';
 
 import React, {useEffect, useRef} from 'react';
@@ -30,7 +29,7 @@ const FlickityCarousel: React.FC<FlickityCarouselProps> = ({options = {}, childr
         const mergedOptions = {...defaultFlickityOptions, ...options};
         // Initialize Flickity instance
         if (flickityRef.current) {
-            flickityInstance.current = new Flickity(flickityRef.current,  mergedOptions);
+            flickityInstance.current = new Flickity(flickityRef.current, mergedOptions);
         }
 
         return () => {

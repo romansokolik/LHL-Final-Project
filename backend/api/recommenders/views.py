@@ -165,8 +165,8 @@ def index(request):
     return JsonResponse({'slides': items, 'genres': list(genres.keys())})
 
 
-def movies(request):
-    return JsonResponse({'error': 'movie_id is required'}, status=400)
+def movies(request, tmdb_id):
+    return JsonResponse({'success': f'tmdb_id: {tmdb_id}'}, status=200)
 
 
 def contents_based(request, tmdb_id, title='Toy Story'):
@@ -193,7 +193,8 @@ def contents_based(request, tmdb_id, title='Toy Story'):
         # Get the movie indices
         movie_indices = [i[0] for i in sim_scores]
         # Return the top 10 most similar movies
-        return df[['tmdb_id', 'title']].iloc[movie_indices]
+        df.rename(columns={'tmdb_id': 'id'}, inplace=True)
+        return df[['id', 'title']].iloc[movie_indices]
 
     # Query the database
     query = "SELECT * FROM content_based_recommendations;"
@@ -229,7 +230,7 @@ def contents_based(request, tmdb_id, title='Toy Story'):
     # print('cosine_sim:', list(cosine_sim[1]))
     # print('indices:', indices[:10])
     # title = 'The Godfather'
-    limit = 10
+    limit = 12
     recommendations = get_recommendations(df, cosine_sim, limit, tmdb_id, title)
     # print(f' recommendations for "{tmdb_id} : {title}"', recommendations, sep='\n')
     return JsonResponse({'results': recommendations.to_dict(orient='records')})
@@ -239,7 +240,7 @@ def matched_posters(request, tmdb_id):
     posters = []
     query = (
         f'SELECT match_id, score FROM poster_matches '
-        f'WHERE base_id={tmdb_id} ORDER BY score DESC LIMIT 10;')
+        f'WHERE base_id={tmdb_id} ORDER BY score DESC LIMIT 9;')
     # Create a connection object
     cursor = connection.cursor()
     # print('query:', query)
@@ -248,7 +249,7 @@ def matched_posters(request, tmdb_id):
     scores = []
     for row in results:
         posters.append({
-            'tmdb_id': row[0],
+            'id': row[0],
             'score': row[1]
         })
     # print('posters:', posters)
@@ -320,7 +321,7 @@ def compare_poster(request, tmdb_id):
 
 
 def poster_searches(request, tmdb_id):
-    query = f'SELECT match_id, score FROM poster_matches WHERE base_id={tmdb_id} ORDER BY score DESC LIMIT 10;'
+    query = f'SELECT match_id, score FROM poster_matches WHERE base_id={tmdb_id} ORDER BY score DESC LIMIT 9;'
     # print('query:', query)
     # Create a connection object
     cursor = connection.cursor()
@@ -331,7 +332,7 @@ def poster_searches(request, tmdb_id):
     scores = []
     for row in results:
         scores.append({
-            'tmdb_id': row[0],
+            'id': row[0],
             'score': row[1]
         })
     connection.close()

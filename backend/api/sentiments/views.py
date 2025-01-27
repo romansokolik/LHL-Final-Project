@@ -24,7 +24,7 @@ def index(request):
     # df = pd.DataFrame(ds)
     # df.to_csv('imdb-reviews.csv', index=False, header=True)
     cursor = connection.cursor()
-    query = "SELECT * FROM imdb_reviews ORDER BY RANDOM() LIMIT 1"
+    query = "SELECT text, label FROM imdb_reviews ORDER BY RANDOM() LIMIT 1"
     cursor = connection.cursor()
     cursor.execute(query)
     results = cursor.fetchall()
