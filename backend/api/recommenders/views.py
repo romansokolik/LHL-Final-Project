@@ -267,10 +267,18 @@ def compare_poster(request, tmdb_id):
     top_n = 10
     limit = 100
     query = (
-        f'SELECT match_id, score FROM poster_matches '
-        f'WHERE base_id={tmdb_id} ORDER BY score DESC LIMIT {top_n};')
+        f'SELECT matched_ids FROM poster_searches '
+        f'WHERE base_id={tmdb_id} LIMIT 1;')
     # Create a connection object
     cursor = connection.cursor()
+    cursor.execute(query)
+    results = cursor.fetchall()
+    # print('results:', results[0][0])
+    searched_ids = set(results[0][0].split(',')) if len(results) else set()
+    query = (
+        f'SELECT match_id, score FROM poster_matches '
+        f'WHERE base_id={tmdb_id} ORDER BY score DESC LIMIT {top_n};')
+    # Reuse the cursor object
     cursor.execute(query)
     results = cursor.fetchall()
     # print('results:', results)
@@ -283,10 +291,21 @@ def compare_poster(request, tmdb_id):
     img_vector = get_image_vector(img1)
     # LOOP THROUGH ALL IMAGES
     for i, tmdb in enumerate(tmdbs):
-        if i >= limit: break
-        # print('tmdb_id:', tmdb_id, 'tmdb:', tmdb)
+        if i >= len(tmdbs): break
         # Skip the same image
-        if tmdb == tmdb_id: continue
+        if int(tmdb) == int(tmdb_id): continue
+        if (int(tmdb) in top_n_scores) or (tmdb in searched_ids):
+            # print(f'{tmdb} already exists')
+            tmdbs.remove(tmdb)
+            # print(f'{tmdb} removed')
+            # print(tmdbs[i])
+            i -= 1
+            # break
+            continue
+        if i >= limit: break
+        # Add the current tmdb to the searched list
+        searched_ids.add(tmdb)
+        # Get the image file path
         img2 = f'{path}{tmdb}/w220_and_h330_face.jpg'
         img_vector2 = get_image_vector(img2)
         score = cosine_similarity(img_vector, img_vector2).reshape(1, )
@@ -316,7 +335,19 @@ def compare_poster(request, tmdb_id):
             connection.commit()
             connection.close()
             print(f'{n} images processed')
-        connection.close()
+
+    # Save the searched images ids
+    ids = ','.join(searched_ids)
+    query = (
+        f'INSERT INTO poster_searches (base_id, matched_ids) '
+        f'VALUES ({tmdb_id}, "{ids}") '
+        f'ON CONFLICT(base_id) '
+        f'DO UPDATE SET matched_ids="{ids}";')
+    cursor = connection.cursor()
+    # print('query:', query)
+    cursor.execute(query)
+    connection.commit()
+    connection.close()
     return JsonResponse({'scores': top_n_scores})
 
 

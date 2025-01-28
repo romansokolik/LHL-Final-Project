@@ -2,7 +2,7 @@
 
 import PostersFrame from "@/components/PostersFrame";
 import Image from "next/image";
-import exec_recommender_search, {fetch_recommender_data} from "@/utils/api";
+import {fetch_recommender_data} from "@/utils/api";
 import Link from "next/link";
 import FlickityCarousel from "@/components/FlickityCarousel";
 import PostersFrameSearching from "@/components/PostersFrameSearching";
@@ -18,9 +18,7 @@ type Movie = {
 
 export default async function Page({params}: { params: { movie: number } }) {
 
-    const id: number = params.movie;
-    const isLoading = false;
-    exec_recommender_search(id);
+    const id: number = await params.movie;
     const matchedData = await fetch_recommender_data('matched-posters', id);
     const contentBasedData = await fetch_recommender_data('contents-based', id);
     const searchedData = await fetch_recommender_data('poster-searches', id);

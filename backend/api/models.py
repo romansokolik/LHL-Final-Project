@@ -60,6 +60,14 @@ class PosterMatch(models.Model):
         unique_together = ('base_id', 'match_id')
 
 
+class PosterSearch(models.Model):
+    base_id = models.IntegerField(primary_key=True)
+    matched_ids = models.TextField()
+
+    class Meta:
+        db_table = 'poster_searches'
+
+
 class ImdbReview(models.Model):
     text = models.TextField()
     label = models.IntegerField()
