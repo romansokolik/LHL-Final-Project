@@ -17,8 +17,8 @@ type Movie = {
 };
 
 export default async function Page({params}: { params: { movie: number } }) {
-
-    const id: number = params.movie;
+    const { movie } = params;
+    const id: number = movie;
     const matchedData = await fetch_recommender_data('matched-posters', id);
     const contentBasedData = await fetch_recommender_data('contents-based', id);
     const searchedData = await fetch_recommender_data('poster-searches', id);
