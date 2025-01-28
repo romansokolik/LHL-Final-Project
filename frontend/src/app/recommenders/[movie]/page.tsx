@@ -16,9 +16,9 @@ type Movie = {
     score: number;
 };
 
-export default async function Page({params}: { params: { movie: number } }) {
-    const { movie } = params;
-    const id: number = movie;
+export default async function Page({params}: { params: { movie: string } }) {
+    const {movie} = params;
+    const id: number = parseInt(movie);
     const matchedData = await fetch_recommender_data('matched-posters', id);
     const contentBasedData = await fetch_recommender_data('contents-based', id);
     const searchedData = await fetch_recommender_data('poster-searches', id);
