@@ -2,7 +2,6 @@ import Link from "next/link";
 import Container from "react-bootstrap/Container";
 import Hamburger from "@/components/Hamburger";
 // import SearchForm from "@/components/SearchForm";
-import Image from "next/image";
 import StopWatch from "@/components/StopWatch";
 
 export default function Navbar() {
