@@ -16,16 +16,23 @@ type Movie = {
     score: number;
 };
 
-export default async function Page({params}: { params: { movie: string } }) {
-    const {movie} = params;
-    const id: number = parseInt(movie);
-    const matchedData = await fetch_recommender_data('matched-posters', id);
-    const contentBasedData = await fetch_recommender_data('contents-based', id);
-    const searchedData = await fetch_recommender_data('poster-searches', id);
+export default async function Page({params}: { params: Promise<{ movie: string }> }) {
+    const promisedParams = await params; // Await `params` before using
+    const id = Number(promisedParams.movie);
+    // Invalid ID
+    if (!id) {
+        return <p>Error: No movie ID provided</p>;
+    }
+    // Fetch data
+    const [matchedData, contentBasedData, searchedData] = await Promise.all([
+        fetch_recommender_data('matched-posters', id),
+        fetch_recommender_data('contents-based', id),
+        fetch_recommender_data('poster-searches', id)
+    ]);
 
     const flickityOptions = {};
     console.log('id:', id);
-    console.log('matchedData:', matchedData);
+    // console.log('matchedData:', matchedData);
 
     return (
         <>
