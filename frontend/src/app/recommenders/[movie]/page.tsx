@@ -41,7 +41,7 @@ export default async function Page({params}: { params: Promise<{ movie: string }
                     <div id={'movie-poster'} className={'col p-1 m-0'}>
                         {id ? (
                             <Image
-                                src={`/images/posters/tmdb/${id}/w600_and_h900_bestv2.jpg`}
+                                src={`/images/posters/tmdb/${id}/300x450.jpg`}
                                 alt="movie poster" width={300} height={450} priority={true}/>
                         ) : (
                             <p>Loading...</p>
@@ -61,7 +61,7 @@ export default async function Page({params}: { params: Promise<{ movie: string }
                     {contentBasedData.results && contentBasedData.results.map((movie: Movie, i: number) => (
                         <div key={i} className="carousel-cell">
                             <Link href={'/recommenders/[movie]'} as={`/recommenders/${movie.id}`}>
-                                <Image src={`/images/posters/tmdb/${movie.id}/w220_and_h330_face.jpg`}
+                                <Image src={`/images/posters/tmdb/${movie.id}/300x450.jpg`}
                                        alt={String(movie.title)} title={String(movie.title)} width={88} height={132}
                                        priority={false}
                                        className={'m-0 border border-1 p-1'}/>

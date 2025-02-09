@@ -15,7 +15,7 @@ export default function PostersFrame({data}: { data: Movie[] }) {
         <>
             {data?.map((movie: Movie, i: number) => (
                 <Link key={i} className={'m-0 p-0'} href={`/recommenders/${movie.id}`}>
-                    <Image src={`/images/posters/tmdb/${movie.id}/w220_and_h330_face.jpg`}
+                    <Image src={`/images/posters/tmdb/${movie.id}/300x450.jpg`}
                            alt={String(movie.score)} title={String(movie.score)} width={88}
                            height={132} priority={false} className={'m-1'}/>
                 </Link>

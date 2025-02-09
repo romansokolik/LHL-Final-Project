@@ -24,7 +24,8 @@ SECRET_KEY = 'django-insecure-($@8q30n1(*@8v21hb7mx$mrlvc#ok_#z6f78-eft=q@u$95(m
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['.vercel.app'
+ALLOWED_HOSTS = [
+    # '.vercel.app'
     # "http://localhost:3000",  # Adjust based on your Next.js frontend URL
     # "http://127.0.0.1:3000",  # Adjust based on your Next.js frontend URL
 ]
@@ -40,7 +41,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
-    # 'api',
     'api.apps.ApiConfig',
 ]
 

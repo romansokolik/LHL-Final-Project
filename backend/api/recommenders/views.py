@@ -38,7 +38,8 @@ def load_image(image_path):
     # Ensure the image is in RGB format
     if input_image.mode != 'RGB':
         input_image = input_image.convert('RGB')
-    return input_image.resize((224, 224))
+    return input_image
+    # return input_image.resize((224, 224))
 
 
 def get_image_embeddings(object_image: image):
@@ -287,7 +288,7 @@ def compare_poster(request, tmdb_id):
         top_n_scores[row[0]] = row[1]
     lowest = min(top_n_scores.values()) if len(top_n_scores) > 0 else 0
     match = lowest
-    img1 = f'{path}{tmdb_id}/w220_and_h330_face.jpg'
+    img1 = f'{path}{tmdb_id}/224x224.jpg'
     img_vector = get_image_vector(img1)
     # LOOP THROUGH ALL IMAGES
     for i, tmdb in enumerate(tmdbs):
@@ -306,7 +307,7 @@ def compare_poster(request, tmdb_id):
         # Add the current tmdb to the searched list
         searched_ids.add(tmdb)
         # Get the image file path
-        img2 = f'{path}{tmdb}/w220_and_h330_face.jpg'
+        img2 = f'{path}{tmdb}/224x224.jpg'
         img_vector2 = get_image_vector(img2)
         score = cosine_similarity(img_vector, img_vector2).reshape(1, )
         score = round(float(score[0]), 7)

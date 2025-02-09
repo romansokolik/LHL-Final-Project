@@ -63,7 +63,7 @@ export default function IsotopeGallery({data}: { data: Data }) {
                                 width={88 * parseFloat(item.rating) / 2.5}
                                 height={132 * parseFloat(item.rating) / 2.5}
                                 title={item.title}
-                                src={`/images/posters/tmdb/${item.tmdb_id}/w220_and_h330_face.jpg`}
+                                src={`/images/posters/tmdb/${item.tmdb_id}/300x450.jpg`}
                                 className="m-1"
                                 onError={(e) => (e.currentTarget.src = '/images/fallback.jpg')} // Optional fallback image
                             />
